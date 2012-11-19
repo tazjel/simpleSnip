@@ -1,9 +1,8 @@
 " simpleSnip.vim
 "
-" Version 1.0
-"
-" Authors: Alexandre Viau with thanks to Xaizek and Stephan Bittner for the
-" search function used to find placeholders.
+" Version 1.1
+" 
+" Authors: Alexandre Viau with thanks to xaizek and Stephan Bittner for helping.
 "
 " Description:
 " This plugin allow to simply create and use snippets using vim abbreviations.
@@ -11,21 +10,19 @@
 " at once. Snippets may be used with any programming languages or for any kind of writing, not only programming.
 "
 " Installation:
-" Copy the plugin file:
-" simpleSnip.vim
+" Unpack the archive to your $VIM directory.  It should contain the plugin file
+" named simpleSnip.vim and several example snippet files:
+"  - snipcs.vim (for C#)
+"  - sniphtml.vim (for HTML)
+"  - snipsql.vim (for SQL)
 "
-" and the snippets files:
-" simpleSnip_CSharpSnippets.vim
-" simpleSnip_HtmlSnippets.vim
-" simpleSnip_SqlSnippets.vim
-"
-" to your plugin directory. Then source (open the file and do so %) the files or restart vim.
+" Then source unpacked *.vim files (open the file and do :so%) or restart vim.
 "
 " Usage:
 " If you add your own snippets files, source them when you add snippets to them.
 " See the snippets in the snippets file:
 "
-" This usage example uses the CL snippet in the simpleSnip_CSharpSnippets.vim: 
+" This usage example uses the CL snippet in the snipcs.vim: 
 "
 " To add a new class in c#, go in insert mode (i) and type CL then press the escape key. The snippet will be inserted.
 " Press 'n' or 'N' to move to from one placeholder to another in the snippet (note: aa is used as a prefix to search, you may change it if you don't like).
@@ -52,6 +49,43 @@
 "
 " ----------------------------------------------------------------------------------------------------------------
 "
+" History:
+"
+" Version 1.0
+"
+" 1. (Xaizek) for the let @/ = "aa" to simulate a search command like /aa but from code.
+" 2. (Stephan Bittner) for the normal /aa to simulate a search command like /aa but from code.
+"
+" Version 1.1 
+"
+" 1. (Xaizek) Changed filetype of all files from `dos` to `unix`.  The thing is
+"    that Vim-scripts with `dos` eol's work on Windows without issues, but
+"    produce plenty of errors while they are loaded on *nix systems.
+"    While Vim-scripts with `unix` eol's work on all platforms.
+"
+" 2. (Xaizek) Modified directory structure to look like this
+"    ftplugin
+"        cs_simplesnip.vim
+"        html_simplesnip.vim
+"        sql_simplesnip.vim
+"    plugin
+"        simpleSnip.vim
+"
+" 3. (Alexandre) Renamed snippets files to add an underscore in the filenames
+"    example cs_simplesnip.vim, so they will not conflict with files already
+"    there, but will still be loaded according to the filetype.
+"
+" 4. (Xaizek) Put `<buffer>` specifier to all :abb commands in the sample snippets,
+"    so they are defined locally to each buffer.
+"
+" 5. (Xaizek) Added `<silent>` specifier to the :imap command in simpleSnip.vim to
+"    prevent `:call ReplaceAll()` displaying on the statusbar when I leave insert mode.
+"
+" 6. (Xaizek) Change :abb to :iabb in the snippets files. Otherwise one will be surprised 
+"    with results after typing name of one of snippets while being in the command-line mode.
+"
+" ----------------------------------------------------------------------------------------------------------------
+"
 " These three commands are there to make indentation work correctly for the snippets in their own filetypes. Deactivate 'autoindent' or 'smart indent' if activated. 
 filetype on
 filetype plugin on
@@ -59,7 +93,7 @@ filetype indent on
 
 " To find placeholders in snippets
 fu! S(n)
-    let @/ = "aa" " Simulate search like /aa (normal /aa may also be used) Credit: Xaizek and Stephan Bittner. If you don't like the 'aa' prefix you may use another string.
+    let @/ = "aa" " Simulate search like /aa (normal /aa may also be used). If you don't like the 'aa' prefix you may use another string.
     " Search back the placeholders
     exe 'normal '.a:n.'N'
 endfu
@@ -79,4 +113,4 @@ fu! ReplaceAll()
     endif
 endfu
 
-imap <esc> <esc>:call ReplaceAll()<cr>
+imap <silent> <esc> <esc>:call ReplaceAll()<cr>
