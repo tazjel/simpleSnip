@@ -1,6 +1,6 @@
 " simpleSnip.vim
 "
-" Version 1.1
+" Version 1.2
 " 
 " Authors: Alexandre Viau with thanks to xaizek and Stephan Bittner for helping.
 "
@@ -47,6 +47,24 @@
 " \}
 " \<esc>:cal S(2)<cr>
 "
+" If you prefer to indent the lines of code yourself in the snippet, add the "\<c-o>:set paste<cr>" line as the second line of the snippets and indent your code.
+" Use tabs or space to indent your code. Here's an example.
+"       
+" iabb <buffer> CL 
+" \<c-o>:set paste<cr>
+" \class aaClassName<cr>
+" \{<cr>
+" \   aaMemberType aaMemberName;
+" \   public aaClassName()<cr>
+" \   {<cr>
+" \       aaCode<cr>
+" \   }<cr>
+" \}
+" \<esc>:cal S(3)<cr>
+"
+" It may be cases where vim will not indent like expected, like in the
+" preceding snippet CL, then in these cases you should indent the code
+" yourself using the "\<c-o>:set paste<cr>" line.
 " ----------------------------------------------------------------------------------------------------------------
 "
 " History:
@@ -84,6 +102,13 @@
 " 6. (Xaizek) Change :abb to :iabb in the snippets files. Otherwise one will be surprised 
 "    with results after typing name of one of snippets while being in the command-line mode.
 "
+" Version 1.2
+"
+" 1. (Xaizek) Provided the paste/nopaste solution to be able to
+"    indent manually the snippets instead to have vim indent them manually.
+"    In some cases, vim did not indent the lines as expected, so his
+"    idea provides a way to manually indent the snippets.
+"
 " ----------------------------------------------------------------------------------------------------------------
 "
 " These three commands are there to make indentation work correctly for the snippets in their own filetypes. Deactivate 'autoindent' or 'smart indent' if activated. 
@@ -91,11 +116,18 @@ filetype on
 filetype plugin on
 filetype indent on
 
-" To find placeholders in snippets
+imap <silent> <esc> <esc>:call ReplaceAll()<cr>
+
+" Called when the snippet is inserted
 fu! S(n)
-    let @/ = "aa" " Simulate search like /aa (normal /aa may also be used). If you don't like the 'aa' prefix you may use another string.
+    " Simulate search like /aa (normal /aa may also be used). If you don't like the 'aa' prefix you may use another string.
+    let @/ = "aa"
     " Search back the placeholders
-    exe 'normal '.a:n.'N'
+    exe "normal ".a:n."N"
+    " This is to reset the paste option used to allow manual indenting of the snippets
+    if &paste == 1
+        set nopaste
+    endif
 endfu
 
 " Replaces all occurences of snippets placeholders by the word specified
@@ -112,5 +144,3 @@ fu! ReplaceAll()
         call setreg('"', '')
     endif
 endfu
-
-imap <silent> <esc> <esc>:call ReplaceAll()<cr>

@@ -18,20 +18,21 @@ iabb <buffer> MA
 \<esc>:cal S(2)<cr>
 
 " CLass
-iabb <buffer> CL 
+iabb <buffer> ZZ 
+\<c-o>:set paste<cr>
 \aaVisibility class aaClassName<cr>
 \{<cr>
-\public aaClassName(aaParamType aaParamName)<cr>
-\{<cr>
-\aaConstructorCode<cr>
-\}<cr>
+\   public aaClassName(aaParamType aaParamName)<cr>
+\   {<cr>
+\       aaConstructorCode<cr>
+\   }<cr>
 \}
 \<esc>:cal S(6)<cr>
 
 " COnstructor
 iabb <buffer> CO 
-\public aaConstructor(aaParamType aaParamName)<cr>
-\: aaBaseOrThis(aaParamNameNoType)<cr>
+\public aaConstructor(aaParamType >)<cr>
+\: aaBaseOrThiS(>NoType)<cr>
 \{<cr>
 \aaCode<cr>
 \}<cr>
@@ -59,14 +60,14 @@ iabb <buffer> PR
 
 " MEthod
 iabb <buffer> ME 
-\aaMethodVisibility aaMethodType aaMethodName(aaParamType aaParamName)<cr>
+\aaMethodVisibility aaMethodType aaMethodNamS(aaParamType >)<cr>
 \{<cr>
 \aaCode<cr>
 \}<cr>
 \<esc>:cal S(6)<cr>
 
 " WriteLine
-iabb <buffer> WL Console.WriteLine("");<esc>3h
+iabb <buffer> WL Console.WriteLinS("");<esc>3h
 
 " ReadKey
 iabb <buffer> RK Console.ReadKey();<esc>
@@ -183,32 +184,32 @@ iabb <buffer> TCF
 " Create and Write to a text File 
 iabb <buffer> FW 
 \StreamWriter sw = new StreamWriter("aaFileName");<cr>
-\sw.WriteLine("aaTextToWriteToFile");<cr>
-\sw.Close();
+\sw.WriteLinS("aaTextToWriteToFile");<cr>
+\sw.ClosS();
 \<esc>:cal S(2)<cr>
 
 " Read and display a text file 
 iabb <buffer> FR 
 \StreamReader sr = new StreamReader("aaFileName");<cr>
-\Console.WriteLine(sr.ReadToEnd());<cr>
-\sr.Close();
+\Console.WriteLinS(sr.ReadToEnd());<cr>
+\sr.ClosS();
 \<esc>2kf"l
 
 " DElegate
 iabb <buffer> DE 
-\aaVisibility delegate aaType aaDelegateName(aaParamType aaParamName); 
+\aaVisibility delegate aaType aaDelegateNamS(aaParamType >); 
 \<esc>:cal S(5)<cr>
 
 iabb <buffer> DE1 
-\aaVisibility delegate void aaDelegateName(object sender, EventArgs e); 
+\aaVisibility delegate void aaDelegateNamS(object sender, EventArgs e); 
 \<esc>:cal S(2)<cr>
 
 " EVent
 iabb <buffer> EV 
 \public delegate void MyEventHandler(object sender, EventArgs e); // Code common to both classes<cr>
 \public event MyEventHandler Clicked; // Code in button class<cr>
-\Clicked(this, new EventArgs()); // Code in button class, in click method<cr>
-\private void Update(object sender, EventArgs e) // Code in list class, method<cr>
+\Clicked(this, new EventArgS()); // Code in button class, in click method<cr>
+\private void UpdatS(object sender, EventArgs e) // Code in list class, method<cr>
 \{<cr>
 \}<cr>
 \button.Clicked += new MyEventHandler(list.Update); // Code in list class or other class to update the list on button click, like if the updatelist code was call when the button is clicked
