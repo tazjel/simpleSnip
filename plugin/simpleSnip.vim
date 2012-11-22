@@ -1,6 +1,6 @@
 " simpleSnip.vim
 "
-" Version 1.2
+" Version 1.3
 " 
 " Authors: Alexandre Viau with thanks to xaizek and Stephan Bittner for helping.
 "
@@ -19,7 +19,12 @@
 " Then source unpacked *.vim files (open the file and do :so%) or restart vim.
 "
 " Usage:
-" If you add your own snippets files, source them when you add snippets to them.
+" Do <leader>rs (\rs by default) (rs for Reload Snippets) mapping to reload the snippets after 
+" the snippets are modified. So for example if you are editing a .cs file and then you go to modify your snippets file 
+" (which is a filetype plugin) then save the snippets file and then returning to the .cs file in
+" edition, reload the file to reload the snippets. To reload the snippets do <leader>rs (\rs) 
+" or save the file and reload it using e %
+" 
 " See the snippets in the snippets file:
 "
 " This usage example uses the CL snippet in the snipcs.vim: 
@@ -52,10 +57,10 @@
 "       
 " iabb <buffer> CL 
 " \<c-o>:set paste<cr>
-" \class aaClassName<cr>
+" \class from<cr>
 " \{<cr>
 " \   aaMemberType aaMemberName;
-" \   public aaClassName()<cr>
+" \   public from()<cr>
 " \   {<cr>
 " \       aaCode<cr>
 " \   }<cr>
@@ -65,6 +70,7 @@
 " It may be cases where vim will not indent like expected, like in the
 " preceding snippet CL, then in these cases you should indent the code
 " yourself using the "\<c-o>:set paste<cr>" line.
+"
 " ----------------------------------------------------------------------------------------------------------------
 "
 " History:
@@ -109,14 +115,27 @@
 "    In some cases, vim did not indent the lines as expected, so his
 "    idea provides a way to manually indent the snippets.
 "
-" ----------------------------------------------------------------------------------------------------------------
+" Version 1.3
 "
+" 1. Added <leader>rr mapping to reload the snippets. So for example if you
+"    are editing a .cs file and then go to modify your snippets file (filetype
+"    plugin) then save the snippets file and then returning to the .cs file in
+"    edition, reload the file to reload the snippets. To do this do <leader>rs
+"    (\rs) (rs for Reload Snippets) or save the file and reload it using e %
+"
+" ----------------------------------------------------------------------------------------------------------------
+
 " These three commands are there to make indentation work correctly for the snippets in their own filetypes. Deactivate 'autoindent' or 'smart indent' if activated. 
 filetype on
 filetype plugin on
 filetype indent on
 
+" After changing text in a placeholder, press <esc> to return to normal mode,
+" at the same time, all the same placeholders elsewhere will be replaced.
 imap <silent> <esc> <esc>:call ReplaceAll()<cr>
+
+" Reload the current file so the snippets are reloaded with it (rs for Reload Snippets) (by default <leader> is \ so do \rs)
+nmap <leader>rs :w \| e %<cr>
 
 " Called when the snippet is inserted
 fu! S(n)
