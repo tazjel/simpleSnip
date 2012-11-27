@@ -1,9 +1,14 @@
 " SQL Snippets for the simpleSnip.vim plugin
 
-" SElect
-iabb <buffer> SE 
-\select aaSelect<cr>
-\from aaFrom<cr>
-\where aaWhere<cr>
-\order by aaOrderBy;
-\<esc>:cal S(4)<cr>
+" Select
+    " SE
+    iabb <buffer> SE 
+    \SELECT<cr>
+    \TOP aaNbRows<cr>
+    \aaFields<cr>
+    \FROM aaTables<cr>
+    \WHERE aaCondition<cr>
+    \GROUP BY aaGrouping<cr>
+    \HAVING aaHaving<cr>
+    \ORDER BY aaOrdering;
+    \<esc>:cal S(7)<cr>
