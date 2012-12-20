@@ -1,24 +1,24 @@
-" simpleSnip.vim
-"
-" Version 1.4
-" 
+" Documentation {{{1
+" Name: simpleSnip.vim
+" Version: 1.5
 " Authors: Alexandre Viau with thanks to xaizek and Stephan Bittner for helping.
 "
-" Description:
+" Description {{{2
+"
 " This plugin allow to simply create and use snippets using vim abbreviations.
 " It allow to use placeholders in snippets and replace multiple placeholders
 " at once. Snippets may be used with any programming languages or for any kind of writing, not only programming.
 "
-" Installation:
+" Installation {{{2
+"
 " Unpack the archive to your $VIM directory.  It should contain the plugin file
 " named simpleSnip.vim and several example snippet files:
 "  - snipcs.vim (for C#)
 "  - sniphtml.vim (for HTML)
 "  - snipsql.vim (for SQL)
-"
 " Then source unpacked *.vim files (open the file and do :so%) or restart vim.
 "
-" Usage:
+" Usage {{{2
 "
 " <leader>rs (reload the snippets used for the current file. For example if current file is a .cs (csharp file) <leader>rs will reload the snippets used for this file. It will reload the file and the snippets file which is a filetype pluging will be reloaded at the same time.)
 " <leader>nc (to add a new snippet to a snippet file using the text in the clipboard (uses vim's auto-indenting)
@@ -45,13 +45,13 @@
 " This is an example of a snippet. Notice that it is simple a vim abbreviation
 " containing placeholders prefixed by 'aa' and at then end the function S() is
 " called. The number '2' in parameter to the S(2) function here means is the
-" number of placeholders in the snippet, here the placeholders are 'aaProgram'
+" number of placeholders in the snippet, here the placeholders are 'exe'
 " and 'ech'. You specify it so that the search will go back and the cursor 
 " will be on the first placeholder when the snippet is inserted. Check the
 " snippets files for more example.
 "
 " abb MA 
-" \class aaProgram<cr>
+" \class exe<cr>
 " \{<cr>
 " \static void Main()<cr>
 " \{<cr>
@@ -123,7 +123,7 @@
 " will be loaded, then the user would insert the snippets he needs, then would do <leader>rs to reload the snippets for the current file type, 
 " so in this case the c# snippets would be reloaded. Another example would be to use c# snippets in a aspx file, or javascript snippets in html etc.
 "
-" Tips:
+" Tips {{{2
 "
 " 1. Type :ab to see the available snippets for this file.
 "
@@ -133,10 +133,13 @@
 " actual name, then once all the snippets are inserted, replace the
 " aaCommandName and it will be replaced in every snippets at once. So to
 " change it only one time.
+" 
+" Bugs {{{2
 "
-" ----------------------------------------------------------------------------------------------------------------
+" 1. Il y a une erreur dans le replace all de simplesnip... voir et tester et corriger depuis les fold...avant c'etait ok
+" 2. Le probleme avec simplesnip c'est peut-etre a cause d'une espace <space> qui essaie de folder/defolder..
 "
-" History:
+" History {{{2
 "
 " Version 1.0
 "
@@ -219,12 +222,27 @@
 "     to use the snippets in the sql_simplesnip.vim filetype plugin when editing a c# code file, or to load
 "     the c# snippets when editing an aspx file, or again, to load the javascript snippets when editing an
 "     html file. It is easy to load <leader>gs, then to come back to previous snippets <leader>rs.
-" ----------------------------------------------------------------------------------------------------------------
+"
+" Version 1.5
+"
+" 1. Added folds
+" 2. Corrected a bug in the ReplaceAll() function, there was a space left over at line 9 which doing an error message.
+
+" Filetype instructions {{{1
 
 " These three commands are there to make indentation work correctly for the snippets in their own filetypes. Deactivate 'autoindent' or 'smart indent' if activated. 
 filetype on
 filetype plugin on
 filetype indent on
+
+" Variables {{{1
+
+let s:prefix = 'aa' " Used by ReplaceAll
+
+" This variable is used to remember last snippets selected, in case the same are use many times in a session, the user will not have to type the filetype multiple times
+let g:SimpleSnipFt = ''
+
+" Mappings {{{1
 
 " After changing text in a placeholder, press <esc> to return to normal mode,
 " at the same time, all the same placeholders elsewhere will be replaced.
@@ -253,18 +271,18 @@ nmap <leader>NS :call NewEmptySnippet(0)<cr>
 " will change the filetype (temporarily) of the current file making vim think it is a sql file, so the sql snippets will be loaded, then
 " the user would insert the snippets he needs, then would do <leader>rs to reload the snippets for the current file type, so in this
 " case the c# snippets would be reloaded. Another example would be to use c# snippets in a aspx file, or javascript snippets in html etc.
-" This variable is used to remember last snippets selected, in case the same are use many times in a session, the user will not have to type the filetype multiple times
-let g:SimpleSnipFt = ''
 nmap <leader>gs :let ft = input('Load other snippets (Enter the filetype e.g: sql. Do <leader>rs to return to previous filetype): ', g:SimpleSnipFt) \| exe 'setfiletype ' . ft \| let g:SimpleSnipFt = ft<cr>
 
-let s:prefix = '' " Used by ReplaceAll
+" Functions {{{1
 
+" S(n) {{{2
 " Called when the snippet is inserted
 fu! S(n)
     " Simulate search like /aa (normal /aa may also be used). If you don't like the 'aa' prefix you may use another string.
     call S1(a:n, "aa")
 endfu
 
+" S1(n, prefix) {{{2
 " This version of the S() function may be used with another prefix than "aa"
 " To use in case "aa" may match actual code in the snippet that is not part of placeholders. See the DataAdapter snippet in the csharp snippet file for example.
 fu! S1(n, prefix)
@@ -278,6 +296,7 @@ fu! S1(n, prefix)
     endif
 endfu
 
+" ReplaceAll() {{{2
 " Replaces all occurences of snippets placeholders by the word specified
 fu! ReplaceAll()
     " Get the word stored in the paste register when 'cw' is done, this is the word to replace
@@ -288,12 +307,12 @@ fu! ReplaceAll()
         " Get the replacement word
         let l:to = expand("<cword>")
         " Remember the cursor position
-        normal m' 
+        normal m'
         " Replace all placeholders by the replacement word
         exe '%s/' . l:from . '\ze\A/' . l:to . '/ge'
         " Return to remembered position
         normal `'
-        let @/ = s:prefix " Need to set this again of the next normal n
+        let @/ = s:prefix " Need to set this again for the next normal n
         " Need to wrap this in try catch not to have the blocking error message if the pattern is not found
         try
             normal n
@@ -304,6 +323,7 @@ fu! ReplaceAll()
     endif
 endfu
 
+" NewSnippetFromClipboard(autoIndent) {{{2
 " Allows to paste as a snippet (in the snippet format) to a snippet file, text copied to the * register (clipboard)
 " So no need to manually add the snippets keywords or the "\", "<cr>" etc. The AddSnippet() function will take care of this only you have to copy to clipboard
 " the text you want to put to snippet, and then do <leader>nc (n for new, c for clipboard) (<leader> is "\" by default so \nc) then the text you copied to 
@@ -313,6 +333,7 @@ fu! NewSnippetFromClipboard(autoIndent)
     call NewSnippet(l:content, a:autoIndent)
 endfu
 
+" NewEmptySnippet(autoIndent) {{{2
 " Add a new empty snippet in a snippet file, where the user may enter himself
 " the snippet code
 fu! NewEmptySnippet(autoIndent)
@@ -323,6 +344,7 @@ fu! NewEmptySnippet(autoIndent)
     call NewSnippet(l:content, a:autoIndent)
 endfu
 
+" NewSnippet(content, autoIndent) {{{2
 " Add a new snippet to a snippet file from the content string provided
 fu! NewSnippet(content, autoIndent)
    " Get the text from the clipboard to add as a snippet, put this text in an
