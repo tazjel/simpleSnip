@@ -1,6 +1,6 @@
 " Documentation {{{1
 " Name: simpleSnip.vim
-" Version: 1.5
+" Version: 1.6
 " Authors: Alexandre Viau with thanks to xaizek and Stephan Bittner for helping.
 "
 " Description {{{2
@@ -136,8 +136,7 @@
 " 
 " Bugs {{{2
 "
-" 1. Il y a une erreur dans le replace all de simplesnip... voir et tester et corriger depuis les fold...avant c'etait ok
-" 2. Le probleme avec simplesnip c'est peut-etre a cause d'une espace <space> qui essaie de folder/defolder..
+" 1. If the prefix for example 'thisvariable' is not at the beginning of the variable, then because <cword> is used, the replacement word is not only from the text typed from the aaTest position, but from all the word.
 "
 " History {{{2
 "
@@ -227,6 +226,10 @@
 "
 " 1. Added folds
 " 2. Corrected a bug in the ReplaceAll() function, there was a space left over at line 9 which doing an error message.
+"
+" Version 1.6
+"
+" 1. (Xaizek) When a placeholder to replace ended with the end of line ($) it was not replaced by the replace all function. This is corrected. Replaced let l:to = expand("<cword>") by let l:to = getreg('.')
 
 " Filetype instructions {{{1
 
@@ -304,12 +307,12 @@ fu! ReplaceAll()
     " If the word to replace start with "aa" or another string specified in
     " s:prefix then it is a placeholder
     if strpart(l:from, 0, 2) == s:prefix
-        " Get the replacement word
-        let l:to = expand("<cword>")
+        " Get the replacement part of word (register '.' contains last inserted text)
+        let l:to = getreg('.')
         " Remember the cursor position
         normal m'
         " Replace all placeholders by the replacement word
-        exe '%s/' . l:from . '\ze\A/' . l:to . '/ge'
+        exe '%s/' . l:from . '\ze\(\A\|$\)/' . l:to . '/ge'
         " Return to remembered position
         normal `'
         let @/ = s:prefix " Need to set this again for the next normal n
